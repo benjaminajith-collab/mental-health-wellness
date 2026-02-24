@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Health Stress Predictor</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <h1 class="display-4">🧠 Mental Wellness Analyzer</h1>
+        <p class="lead text-muted">
+            Check your daily stress level based on lifestyle habits
+        </p>
+    </div>
+
+    <div class="card shadow-lg p-4">
+        <form method="POST">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sleep (0-10) (hours)</label>
+                    <input type="number" step="0.1" name="sleep" class="form-control" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mood (0-10) (0 being lowest)</label>
+                    <input type="number" step="0.1" name="mood" class="form-control" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Screen Time (0-10) (hours)</label>
+                    <input type="number" step="0.1" name="screen" class="form-control" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Physical Activity (0-10) (hours)</label>
+                    <input type="number" step="0.1" name="activity" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-primary btn-lg">
+                    Analyze Stress
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    {% if result %}
+
+    <div class="card mt-5 shadow p-4 text-center">
+
+        <h2>Your Stress Score: {{ result }}</h2>
+
+        {% if level == "Low" %}
+            <div class="alert alert-success mt-3">
+                😊 Stress Level: Low — Keep maintaining your healthy habits!
+            </div>
+        {% elif level == "Medium" %}
+            <div class="alert alert-warning mt-3">
+                😐 Stress Level: Medium — Small improvements can help.
+            </div>
+        {% else %}
+            <div class="alert alert-danger mt-3">
+                😟 Stress Level: High — Consider slowing down and relaxing.
+            </div>
+        {% endif %}
+
+        <!-- Stress Meter -->
+        <div class="mt-4">
+            <h5>Stress Meter</h5>
+
+            <div class="progress" style="height: 30px;">
+                <div class="progress-bar 
+                    {% if level == 'Low' %}
+                        bg-success
+                    {% elif level == 'Medium' %}
+                        bg-warning
+                    {% else %}
+                        bg-danger
+                    {% endif %}"
+                    role="progressbar"
+                    style="width: {{ result * 10 }}%;">
+                    {{ result }}/10
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
