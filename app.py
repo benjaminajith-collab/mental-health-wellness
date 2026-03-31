@@ -5,6 +5,7 @@ from skfuzzy import control as ctrl
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import os
 
 app = Flask(__name__)
 
@@ -54,7 +55,6 @@ rules = [
 
 stress_ctrl = ctrl.ControlSystem(rules)
 
-
 # ---------- STRESS LEVEL FUNCTION ----------
 def get_stress_level(val):
     if val <= 3:
@@ -69,28 +69,35 @@ def get_stress_level(val):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        sleep_val = float(request.form["sleep"])
-        mood_val = float(request.form["mood"])
-        screen_val = float(request.form["screen"])
-        activity_val = float(request.form["activity"])
+        try:
+            sleep_val = float(request.form["sleep"])
+            mood_val = float(request.form["mood"])
+            screen_val = float(request.form["screen"])
+            activity_val = float(request.form["activity"])
+            if any(val > 10 for val in [sleep_val, mood_val, screen_val, activity_val]):
+                return render_template("index.html", error="Invalid input! Values cannot be above 10")
+            if any(val < 0 for val in [sleep_val, mood_val, screen_val, activity_val]):
+                return render_template("index.html", error="Invalid input! Values cannot be negative")
 
-        sim = ctrl.ControlSystemSimulation(stress_ctrl)
-        sim.input["sleep"] = sleep_val
-        sim.input["mood_level"] = mood_val
-        sim.input["screen_time"] = screen_val
-        sim.input["physical_activity"] = activity_val
+            sim = ctrl.ControlSystemSimulation(stress_ctrl)
+            sim.input["sleep"] = sleep_val
+            sim.input["mood_level"] = mood_val
+            sim.input["screen_time"] = screen_val
+            sim.input["physical_activity"] = activity_val
 
-        sim.compute()
-        result = round(sim.output["stress"], 2)
-        level = get_stress_level(result)
+            sim.compute()
+            result = round(sim.output["stress"], 2)
+            level = get_stress_level(result)
 
-        return render_template("index.html", result=result, level=level)
+            return render_template("index.html", result=result, level=level)
+
+        except:
+            return render_template("index.html", error="Invalid input! Please enter valid numbers.")
 
     return render_template("index.html")
 
 
-import os
-
+# ---------- RUN ----------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=True)
