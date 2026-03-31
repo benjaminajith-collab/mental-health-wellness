@@ -21,27 +21,43 @@
     </div>
 
     <div class="card shadow-lg p-4">
+
+        <!-- ✅ ERROR MESSAGE -->
+        {% if error %}
+            <div class="alert alert-danger text-center">
+                {{ error }}
+            </div>
+        {% endif %}
+
         <form method="POST">
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Sleep (0-10) (hours)</label>
-                    <input type="number" step="0.1" name="sleep" class="form-control" required>
+                    <input type="number" step="0.1" name="sleep"
+                           class="form-control" required
+                           value="{{ request.form.sleep }}">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Mood (0-10) (0 being lowest)</label>
-                    <input type="number" step="0.1" name="mood" class="form-control" required>
+                    <input type="number" step="0.1" name="mood"
+                           class="form-control" required
+                           value="{{ request.form.mood }}">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Screen Time (0-10) (hours)</label>
-                    <input type="number" step="0.1" name="screen" class="form-control" required>
+                    <input type="number" step="0.1" name="screen"
+                           class="form-control" required
+                           value="{{ request.form.screen }}">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Physical Activity (0-10) (hours)</label>
-                    <input type="number" step="0.1" name="activity" class="form-control" required>
+                    <input type="number" step="0.1" name="activity"
+                           class="form-control" required
+                           value="{{ request.form.activity }}">
                 </div>
             </div>
 
